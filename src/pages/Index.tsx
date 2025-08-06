@@ -176,7 +176,7 @@ const Index = () => {
 
       {/* Seções */}
       <Section id="quem-somos" title="Quem somos nós">
-        <p className="text-center">
+        <p className="text-center mb-12">
           Somos uma startup inovadora focada em tecnologia para saúde,
           especializada no desenvolvimento de soluções inteligentes para o
           monitoramento glicêmico não invasivo. Nosso projeto utiliza
@@ -187,6 +187,71 @@ const Index = () => {
           confortável, por meio de software de alta performance e modelos
           preditivos inteligentes.
         </p>
+        
+                 {/* Cards com fotos e textos */}
+                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mt-12">
+  
+  {/* Card 1 */}
+  <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 min-h-[500px]">
+  <CardContent className="p-10 text-center h-full flex flex-col justify-center">
+    <div className="w-48 h-56 mx-auto mb-8 rounded-xl overflow-hidden border-4 border-blue-100 shadow-xl">
+      <img
+        src="fotobeto.jpg" // nome da imagem que você acabou de enviar
+        alt="Foto de Beto Lima"
+        className="w-full h-full object-cover"
+      />
+    </div>
+    <h3 className="font-bold text-2xl mb-4 text-gray-800">Beto Lima</h3>
+    <p className="text-lg text-gray-600">CCO & Dev. Front-End</p>
+  </CardContent>
+</Card>
+
+  {/* Card 2 */}
+  <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 min-h-[500px]">
+    <CardContent className="p-10 text-center h-full flex flex-col justify-center">
+      <div className="w-48 h-56 mx-auto mb-8 rounded-xl overflow-hidden border-4 border-green-100 shadow-xl">
+        <img
+          src="fotohenrique.jpg"
+          alt="Foto de Henrique Lima"
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <h3 className="font-bold text-2xl mb-4 text-gray-800">Henrique Lima</h3>
+      <p className="text-lg text-gray-600">P.O & Dev. Back-End</p>
+    </CardContent>
+  </Card>
+
+  {/* Card 3 */}
+  <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 min-h-[500px]">
+    <CardContent className="p-10 text-center h-full flex flex-col justify-center">
+      <div className="w-48 h-56 mx-auto mb-8 rounded-xl overflow-hidden border-4 border-purple-100 shadow-xl">
+        <img
+          src="fotoyuri.jpg"
+          alt="Foto de Yuri Kohara"
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <h3 className="font-bold text-2xl mb-4 text-gray-800">Yuri Kohara</h3>
+      <p className="text-lg text-gray-600">A DECIDIR</p>
+    </CardContent>
+  </Card>
+
+  {/* Card 4 */}
+  <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 min-h-[500px]">
+    <CardContent className="p-10 text-center h-full flex flex-col justify-center">
+      <div className="w-48 h-56 mx-auto mb-8 rounded-xl overflow-hidden border-4 border-orange-100 shadow-xl">
+        <img
+          src="fotolucas.jpg"
+          alt="Foto de Lucas Rovina"
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <h3 className="font-bold text-2xl mb-4 text-gray-800">Lucas Rovina</h3>
+      <p className="text-lg text-gray-600">Analista de Dados</p>
+    </CardContent>
+  </Card>
+
+</div>
       </Section>
 
       <Section id="servicos" title="Nossos Serviços">
