@@ -93,5 +93,21 @@
 
   body {
     @apply bg-background text-foreground;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+  
+  html {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+  
+  #root {
+    background-color: hsl(var(--background));
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    width: 100%;
   }
 }

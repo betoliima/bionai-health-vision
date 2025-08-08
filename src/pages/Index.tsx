@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, ReactNode } from "react";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin, Lightbulb, Users, Code, TestTube, Rocket, Award } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 const Index = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -50,9 +52,14 @@ const Index = () => {
     className?: string;
     variant?: "default" | "cta";
   }) => {
+    const [ref, inView] = useInView({
+      threshold: 0.3,
+      triggerOnce: false
+    });
+
     if (variant === "cta") {
       return (
-        <section id={id} className={`py-20 px-6 ${className}`}>
+        <section id={id} className={`py-20 px-6 bg-white ${className}`}>
           <div className="container mx-auto max-w-4xl">
             <h2 className="text-4xl font-bold text-center mb-12 text-foreground">
               {title}
@@ -76,6 +83,235 @@ const Index = () => {
           </h2>
           <div className="text-lg leading-relaxed text-foreground/80">
             {children}
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  const TimelineStep = ({ 
+    step, 
+    index, 
+    isLast 
+  }: { 
+    step: any; 
+    index: number; 
+    isLast: boolean; 
+  }) => {
+    const [ref, inView] = useInView({
+      threshold: 0.5,
+      triggerOnce: false
+    });
+
+    return (
+      <motion.div 
+        className="flex flex-col items-center relative group cursor-pointer" 
+        ref={ref}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+        whileHover={{ scale: 1.02 }}
+      >
+        {/* Ponto da linha do tempo */}
+        <motion.div
+          className="relative z-10 w-16 h-16 rounded-full flex items-center justify-center mb-6 transition-all duration-300 bg-gray-200 text-gray-500 group-hover:bg-blue-500 group-hover:text-white group-hover:scale-110 group-hover:shadow-lg"
+          whileHover={{ scale: 1.1 }}
+        >
+          <step.icon className="w-6 h-6 transition-colors duration-300" />
+        </motion.div>
+
+        {/* Conteúdo do passo */}
+        <motion.div
+          className="text-center max-w-xs transition-all duration-300 opacity-60 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
+        >
+          <h3 className="font-bold text-lg mb-2 transition-colors duration-300 text-gray-700 group-hover:text-blue-600">
+            {step.title}
+          </h3>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            {step.description}
+          </p>
+          
+          {/* Imagem/Ilustração */}
+          {step.image && (
+            <motion.div
+              className="mt-4 w-20 h-20 mx-auto rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-105"
+            >
+              <step.image className="w-10 h-10 text-gray-400 transition-colors duration-300 group-hover:text-blue-400" />
+            </motion.div>
+          )}
+        </motion.div>
+      </motion.div>
+    );
+  };
+
+
+
+    const QuemSomosSection = () => {
+    const [ref, inView] = useInView({
+      threshold: 0.3,
+      triggerOnce: false
+    });
+
+    return (
+      <section id="quem-somos" className="py-20 px-6 bg-gradient-section">
+        <div className="container mx-auto max-w-4xl">
+          <h2 className="text-4xl font-bold text-center mb-12 text-foreground">
+            Quem somos nós
+          </h2>
+          <p className="text-center mb-12 text-lg leading-relaxed text-foreground/80">
+            Somos uma startup inovadora focada em tecnologia para saúde,
+            especializada no desenvolvimento de soluções inteligentes para o
+            monitoramento glicêmico não invasivo. Nosso projeto utiliza
+            inteligência artificial avançada para analisar dados do sensor
+            E-Gluco, da UDESC, oferecendo previsões e correções precisas dos
+            níveis de glicose. Nosso objetivo é facilitar a vida de pessoas com
+            diabetes, proporcionando um acompanhamento mais eficiente e
+            confortável, por meio de software de alta performance e modelos
+            preditivos inteligentes.
+          </p>
+          
+          {/* Fotos da equipe em horizontal */}
+          <div className="flex justify-center mt-12">
+            <div className="flex gap-8">
+              {/* Beto Lima */}
+              <div className="group relative">
+                <div className="w-64 h-200 rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
+                  <img
+                    src="fotobeto.jpg"
+                    alt="Foto de Beto Lima"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Overlay com nome e cargo */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg flex flex-col justify-end p-4">
+                  <h3 className="text-white font-bold text-xl">Beto Lima</h3>
+                  <p className="text-white/90 text-base">CCO & Dev. Front-End</p>
+                </div>
+              </div>
+
+              {/* Henrique Lima */}
+              <div className="group relative">
+                <div className="w-64 h-200 rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
+                  <img
+                    src="fotohenrique.jpg"
+                    alt="Foto de Henrique Lima"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Overlay com nome e cargo */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg flex flex-col justify-end p-4">
+                  <h3 className="text-white font-bold text-xl">Henrique Lima</h3>
+                  <p className="text-white/90 text-base">P.O & Dev. Back-End</p>
+                </div>
+              </div>
+
+              {/* Yuri Kohara */}
+              <div className="group relative">
+                <div className="w-64 h-200 rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
+                  <img
+                    src="fotoyuri.jpg"
+                    alt="Foto de Yuri Kohara"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Overlay com nome e cargo */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg flex flex-col justify-end p-4">
+                  <h3 className="text-white font-bold text-xl">Yuri Kohara</h3>
+                  <p className="text-white/90 text-base">A DECIDIR</p>
+                </div>
+              </div>
+
+              {/* Lucas Rovina */}
+              <div className="group relative">
+                <div className="w-64 h-200 rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
+                  <img
+                    src="fotolucas.jpg"
+                    alt="Foto de Lucas Rovina"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Overlay com nome e cargo */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg flex flex-col justify-end p-4">
+                  <h3 className="text-white font-bold text-xl">Lucas Rovina</h3>
+                  <p className="text-white/90 text-base">Analista de Dados</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  const TimelineSection = () => {
+    const [ref, inView] = useInView({
+      threshold: 0.3,
+      triggerOnce: false
+    });
+
+    const timelineSteps = [
+      {
+        title: "Ideação",
+        description: "Identificação do problema real: desconforto dos métodos invasivos de monitoramento glicêmico",
+        icon: Lightbulb,
+        image: Lightbulb
+      },
+      {
+        title: "Pesquisa",
+        description: "Estudo aprofundado sobre diabetes e tecnologias de monitoramento não invasivo",
+        icon: Users,
+        image: Users
+      },
+      {
+        title: "Desenvolvimento",
+        description: "Criação do software de IA para análise de dados do sensor E-Gluco",
+        icon: Code,
+        image: Code
+      },
+      {
+        title: "Testes",
+        description: "Validação e refinamento dos algoritmos de machine learning",
+        icon: TestTube,
+        image: TestTube
+      },
+      {
+        title: "Parceria UDESC",
+        description: "Colaboração estratégica com o Laboratório de Eletrônica Orgânica",
+        icon: Rocket,
+        image: Rocket
+      },
+      {
+        title: "Futuro",
+        description: "Expansão e licenciamento para empresas de saúde e tecnologia",
+        icon: Award,
+        image: Award
+      }
+    ];
+
+    return (
+      <section className="py-20 px-6 bg-white">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">
+              Nossa Trajetória
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Uma jornada de inovação e dedicação para revolucionar o monitoramento glicêmico
+            </p>
+          </div>
+
+          {/* Linha do tempo horizontal */}
+          <div className="relative">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8 pb-8">
+              {timelineSteps.map((step, index) => (
+                <TimelineStep
+                  key={index}
+                  step={step}
+                  index={index}
+                  isLast={index === timelineSteps.length - 1}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -146,7 +382,7 @@ const Index = () => {
         <video
           ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover"
-          src="bionai.mp4"
+          src="bionai4.mp4"
           autoPlay
           loop
           muted
@@ -174,85 +410,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Seções */}
-      <Section id="quem-somos" title="Quem somos nós">
-        <p className="text-center mb-12">
-          Somos uma startup inovadora focada em tecnologia para saúde,
-          especializada no desenvolvimento de soluções inteligentes para o
-          monitoramento glicêmico não invasivo. Nosso projeto utiliza
-          inteligência artificial avançada para analisar dados do sensor
-          E-Gluco, da UDESC, oferecendo previsões e correções precisas dos
-          níveis de glicose. Nosso objetivo é facilitar a vida de pessoas com
-          diabetes, proporcionando um acompanhamento mais eficiente e
-          confortável, por meio de software de alta performance e modelos
-          preditivos inteligentes.
-        </p>
-        
-                 {/* Cards com fotos e textos */}
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mt-12">
-  
-  {/* Card 1 */}
-  <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 min-h-[500px]">
-  <CardContent className="p-10 text-center h-full flex flex-col justify-center">
-    <div className="w-48 h-56 mx-auto mb-8 rounded-xl overflow-hidden border-4 border-blue-100 shadow-xl">
-      <img
-        src="fotobeto.jpg" // nome da imagem que você acabou de enviar
-        alt="Foto de Beto Lima"
-        className="w-full h-full object-cover"
-      />
-    </div>
-    <h3 className="font-bold text-2xl mb-4 text-gray-800">Beto Lima</h3>
-    <p className="text-lg text-gray-600">CCO & Dev. Front-End</p>
-  </CardContent>
-</Card>
-
-  {/* Card 2 */}
-  <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 min-h-[500px]">
-    <CardContent className="p-10 text-center h-full flex flex-col justify-center">
-      <div className="w-48 h-56 mx-auto mb-8 rounded-xl overflow-hidden border-4 border-green-100 shadow-xl">
-        <img
-          src="fotohenrique.jpg"
-          alt="Foto de Henrique Lima"
-          className="w-full h-full object-cover"
-        />
-      </div>
-      <h3 className="font-bold text-2xl mb-4 text-gray-800">Henrique Lima</h3>
-      <p className="text-lg text-gray-600">P.O & Dev. Back-End</p>
-    </CardContent>
-  </Card>
-
-  {/* Card 3 */}
-  <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 min-h-[500px]">
-    <CardContent className="p-10 text-center h-full flex flex-col justify-center">
-      <div className="w-48 h-56 mx-auto mb-8 rounded-xl overflow-hidden border-4 border-purple-100 shadow-xl">
-        <img
-          src="fotoyuri.jpg"
-          alt="Foto de Yuri Kohara"
-          className="w-full h-full object-cover"
-        />
-      </div>
-      <h3 className="font-bold text-2xl mb-4 text-gray-800">Yuri Kohara</h3>
-      <p className="text-lg text-gray-600">A DECIDIR</p>
-    </CardContent>
-  </Card>
-
-  {/* Card 4 */}
-  <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 min-h-[500px]">
-    <CardContent className="p-10 text-center h-full flex flex-col justify-center">
-      <div className="w-48 h-56 mx-auto mb-8 rounded-xl overflow-hidden border-4 border-orange-100 shadow-xl">
-        <img
-          src="fotolucas.jpg"
-          alt="Foto de Lucas Rovina"
-          className="w-full h-full object-cover"
-        />
-      </div>
-      <h3 className="font-bold text-2xl mb-4 text-gray-800">Lucas Rovina</h3>
-      <p className="text-lg text-gray-600">Analista de Dados</p>
-    </CardContent>
-  </Card>
-
-</div>
-      </Section>
+             {/* Seções */}
+             <QuemSomosSection />
 
       <Section id="servicos" title="Nossos Serviços">
         <div className="bg-white rounded-lg p-8 shadow-soft">
@@ -269,24 +428,7 @@ const Index = () => {
         </div>
       </Section>
 
-      <Section id="trajetoria" title="Nossa Trajetória" variant="cta">
-        <div className="text-center">
-          <p className="mb-6">
-            Nossa jornada começou com a identificação de um problema real: o
-            desconforto e as limitações dos métodos invasivos de monitoramento
-            glicêmico. Através de parceria estratégica com a UDESC e
-            desenvolvimento contínuo de soluções em IA, estamos criando o
-            futuro do monitoramento não invasivo.
-          </p>
-          <div className="bg-white/10 p-8 rounded-lg border border-white/20">
-            <img
-              src="/Sem título.png"
-              alt="Imagem ilustrando a trajetória da BionAI"
-              className="mx-auto max-h-80 w-auto object-contain"
-            />
-          </div>
-        </div>
-      </Section>
+             <TimelineSection />
 
       <Section id="parcerias" title="Nossas Parcerias" variant="cta">
         <div className="text-center">
