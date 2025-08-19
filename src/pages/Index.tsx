@@ -30,6 +30,8 @@ const Index = () => {
     }
   };
 
+  // Desativado: detecção dinâmica de cor do vídeo
+
   const navigationItems = [
     { label: "Quem somos nós", id: "quem-somos" },
     { label: "Serviços", id: "servicos" },
@@ -59,7 +61,7 @@ const Index = () => {
 
     if (variant === "cta") {
       return (
-        <section id={id} className={`py-20 px-6 bg-white ${className}`}>
+        <section id={id} className={`py-20 px-6 bg-transparent ${className}`}>
           <div className="container mx-auto max-w-4xl">
             <h2 className="text-4xl font-bold text-center mb-12 text-foreground">
               {title}
@@ -75,7 +77,7 @@ const Index = () => {
     return (
       <section
         id={id}
-        className={`py-20 px-6 bg-gradient-section ${className}`}
+        className={`py-20 px-6 bg-transparent ${className}`}
       >
         <div className="container mx-auto max-w-4xl">
           <h2 className="text-4xl font-bold text-center mb-12 text-foreground">
@@ -124,19 +126,19 @@ const Index = () => {
         <motion.div
           className="text-center max-w-xs transition-all duration-300 opacity-60 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
         >
-          <h3 className="font-bold text-lg mb-2 transition-colors duration-300 text-gray-700 group-hover:text-blue-600">
+          <h3 className="font-bold text-lg mb-2 transition-colors duration-300 text-gray-200 group-hover:text-blue-300">
             {step.title}
           </h3>
-          <p className="text-sm text-gray-600 leading-relaxed">
+          <p className="text-sm text-gray-300 leading-relaxed">
             {step.description}
           </p>
           
           {/* Imagem/Ilustração */}
           {step.image && (
             <motion.div
-              className="mt-4 w-20 h-20 mx-auto rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-105"
+              className="mt-4 w-20 h-20 mx-auto rounded-lg overflow-hidden bg-gray-800 flex items-center justify-center transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-105"
             >
-              <step.image className="w-10 h-10 text-gray-400 transition-colors duration-300 group-hover:text-blue-400" />
+              <step.image className="w-10 h-10 text-gray-200 transition-colors duration-300 group-hover:text-blue-300" />
             </motion.div>
           )}
         </motion.div>
@@ -153,7 +155,7 @@ const Index = () => {
     });
 
     return (
-      <section id="quem-somos" className="py-20 px-6 bg-gradient-section">
+      <section id="quem-somos" className="py-20 px-6 bg-transparent">
         <div className="container mx-auto max-w-4xl">
           <h2 className="text-4xl font-bold text-center mb-12 text-foreground">
             Quem somos nós
@@ -289,13 +291,13 @@ const Index = () => {
     ];
 
     return (
-      <section className="py-20 px-6 bg-white">
+      <section className="py-20 px-6 bg-transparent">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">
+            <h2 className="text-4xl font-bold text-foreground mb-4">
               Nossa Trajetória
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-foreground/80 max-w-3xl mx-auto">
               Uma jornada de inovação e dedicação para revolucionar o monitoramento glicêmico
             </p>
           </div>
@@ -321,7 +323,7 @@ const Index = () => {
   const ContactCard = () => {
     return (
       <div className="grid md:grid-cols-3 gap-6 mt-8">
-        <Card className="bg-white/10 border-white/20 hover:bg-white/20 transition-all duration-300">
+        <Card className="bg-black/10 border-black/20 hover:bg-black/20 transition-all duration-300">
           <CardContent className="p-6 text-center text-white">
             <Mail className="w-8 h-8 mx-auto mb-4 text-primary-glow" />
             <h3 className="font-semibold mb-2">Email</h3>
@@ -329,7 +331,7 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/10 border-white/20 hover:bg-white/20 transition-all duration-300">
+        <Card className="bg-black/10 border-black/20 hover:bg-black/20 transition-all duration-300">
           <CardContent className="p-6 text-center text-white">
             <Phone className="w-8 h-8 mx-auto mb-4 text-primary-glow" />
             <h3 className="font-semibold mb-2">WhatsApp</h3>
@@ -337,7 +339,7 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/10 border-white/20 hover:bg-white/20 transition-all duration-300">
+        <Card className="bg-black/10 border-black/20 hover:bg-black/20 transition-all duration-300">
           <CardContent className="p-6 text-center text-white">
             <MapPin className="w-8 h-8 mx-auto mb-4 text-primary-glow" />
             <h3 className="font-semibold mb-2">Localização</h3>
@@ -352,29 +354,26 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? "bg-secondary/95 backdrop-blur-md shadow-soft"
-            : "bg-transparent"
-        }`}
-      >
-        <div className="container mx-auto px-6">
-          <div className="flex justify-center items-center py-4">
-            <div className="flex gap-8">
-              {navigationItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className="text-white font-semibold hover:text-primary-glow transition-colors duration-300 relative group"
-                >
-                  {item.label}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-glow transition-all duration-300 group-hover:w-full"></span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </nav>
+  className="fixed top-0 left-0 right-0 z-50 bg-transparent transition-all duration-300"
+>
+  <div className="container mx-auto px-6">
+    <div className="flex justify-center items-center py-4">
+      <div className="flex gap-8">
+        {navigationItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => scrollToSection(item.id)}
+            className="text-white text-xl font-semibold hover:text-primary-glow transition-colors duration-300 relative group"
+          >
+            {item.label}
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-glow transition-all duration-300 group-hover:w-full"></span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+</nav>
+
 
       {/* Video Hero */}
       <section className="relative h-screen w-full overflow-hidden flex items-center justify-center">
@@ -414,7 +413,7 @@ const Index = () => {
              <QuemSomosSection />
 
       <Section id="servicos" title="Nossos Serviços">
-        <div className="bg-white rounded-lg p-8 shadow-soft">
+        <div className="bg-transparent rounded-lg p-8">
           <p>
             Oferecemos um software inteligente de monitoramento glicêmico que
             integra dados do sensor E-Gluco para corrigir e prever níveis de
@@ -441,7 +440,7 @@ const Index = () => {
             integração com o nosso software de inteligência artificial,
             fortalecendo a base científica e tecnológica da nossa solução.
           </p>
-          <div className="bg-white/10 p-8 rounded-lg border border-white/20">
+          <div className="bg-transparent p-8 rounded-lg border border-border">
             <img
                src="/Marca_Udesc.png"
               alt="Imagem ilustrando a trajetória da BionAI"
