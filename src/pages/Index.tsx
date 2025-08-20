@@ -1,12 +1,22 @@
 import { useState, useEffect, useRef, ReactNode } from "react";
+type FacInstance = {
+  getColorAsync: (
+    source: HTMLVideoElement | HTMLImageElement | HTMLCanvasElement,
+    options?: any
+  ) => Promise<{ rgb: string }>;
+  destroy?: () => void;
+};
 import { Mail, Phone, MapPin, Lightbulb, Users, Code, TestTube, Rocket, Award } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const facRef = useRef<FacInstance | null>(null);
+  const [bgColor, setBgColor] = useState<string>("#000000");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,6 +31,91 @@ const Index = () => {
     if (videoRef.current) {
       videoRef.current.play().catch(console.error);
     }
+  }, []);
+
+  // Extração de cor dominante do vídeo e aplicação dinâmica no background
+  useEffect(() => {
+    const videoEl = videoRef.current;
+    if (!videoEl) return;
+
+    let intervalId: number | null = null;
+    let isSampling = false;
+    let disposed = false;
+
+    const sampleColor = async () => {
+      if (!videoEl) return;
+      if (videoEl.paused || videoEl.ended || videoEl.readyState < 2) return;
+      if (isSampling) return;
+      if (!facRef.current) return;
+      isSampling = true;
+      try {
+        const color = await facRef.current.getColorAsync(videoEl, {
+          algorithm: "dominant",
+          step: 10,
+          silent: true,
+        });
+        if (color && color.rgb) {
+          setBgColor(color.rgb);
+        }
+      } catch {
+        // silencioso
+      } finally {
+        isSampling = false;
+      }
+    };
+
+    const start = () => {
+      if (intervalId !== null) return;
+      intervalId = window.setInterval(() => {
+        window.requestAnimationFrame(sampleColor);
+      }, 200);
+    };
+
+    const stop = () => {
+      if (intervalId !== null) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    };
+
+    const onReady = () => {
+      // inicia amostragem apenas quando fac estiver pronto e vídeo puder tocar
+      if (!videoEl.paused) start();
+    };
+
+    const setup = async () => {
+      try {
+        const mod: any = await import("fast-average-color");
+        const FacCtor = mod?.default ?? mod?.FastAverageColor ?? mod;
+        facRef.current = new FacCtor();
+      } catch {
+        // se falhar o import, aborta gracefully
+        return;
+      }
+
+      if (disposed) return;
+      videoEl.addEventListener("play", start);
+      videoEl.addEventListener("pause", stop);
+      videoEl.addEventListener("ended", stop);
+      videoEl.addEventListener("loadeddata", onReady);
+      videoEl.addEventListener("canplay", onReady);
+
+      if (!videoEl.paused && videoEl.readyState >= 2) start();
+    };
+
+    setup();
+
+    return () => {
+      disposed = true;
+      stop();
+      videoEl.removeEventListener("play", start);
+      videoEl.removeEventListener("pause", stop);
+      videoEl.removeEventListener("ended", stop);
+      videoEl.removeEventListener("loadeddata", onReady);
+      videoEl.removeEventListener("canplay", onReady);
+      facRef.current?.destroy?.();
+      facRef.current = null;
+    };
   }, []);
 
   const scrollToSection = (sectionId: string) => {
@@ -100,49 +195,25 @@ const Index = () => {
     index: number; 
     isLast: boolean; 
   }) => {
-    const [ref, inView] = useInView({
-      threshold: 0.5,
-      triggerOnce: false
-    });
-
     return (
-      <motion.div 
-        className="flex flex-col items-center relative group cursor-pointer" 
-        ref={ref}
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: index * 0.1 }}
-        whileHover={{ scale: 1.02 }}
-      >
-        {/* Ponto da linha do tempo */}
-        <motion.div
-          className="relative z-10 w-16 h-16 rounded-full flex items-center justify-center mb-6 transition-all duration-300 bg-gray-200 text-gray-500 group-hover:bg-blue-500 group-hover:text-white group-hover:scale-110 group-hover:shadow-lg"
-          whileHover={{ scale: 1.1 }}
-        >
+      <div className="flex flex-col items-center relative group cursor-pointer">
+        <div className="relative z-10 w-16 h-16 rounded-full flex items-center justify-center mb-6 bg-gray-200 text-gray-500 transition-all duration-300 group-hover:bg-blue-500 group-hover:text-white group-hover:scale-110 group-hover:shadow-lg">
           <step.icon className="w-6 h-6 transition-colors duration-300" />
-        </motion.div>
-
-        {/* Conteúdo do passo */}
-        <motion.div
-          className="text-center max-w-xs transition-all duration-300 opacity-60 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
-        >
-          <h3 className="font-bold text-lg mb-2 transition-colors duration-300 text-gray-200 group-hover:text-blue-300">
+        </div>
+        <div className="text-center max-w-xs transition-all duration-300 opacity-60 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0">
+          <h3 className="font-bold text-lg mb-2 text-gray-200 transition-colors duration-300 group-hover:text-blue-300">
             {step.title}
           </h3>
           <p className="text-sm text-gray-300 leading-relaxed">
             {step.description}
           </p>
-          
-          {/* Imagem/Ilustração */}
           {step.image && (
-            <motion.div
-              className="mt-4 w-20 h-20 mx-auto rounded-lg overflow-hidden bg-gray-800 flex items-center justify-center transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-105"
-            >
+            <div className="mt-4 w-20 h-20 mx-auto rounded-lg overflow-hidden bg-gray-800 flex items-center justify-center transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-105">
               <step.image className="w-10 h-10 text-gray-200 transition-colors duration-300 group-hover:text-blue-300" />
-            </motion.div>
+            </div>
           )}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     );
   };
 
@@ -177,7 +248,7 @@ const Index = () => {
             <div className="flex gap-8">
               {/* Beto Lima */}
               <div className="group relative">
-                <div className="w-64 h-200 rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
+                <div className="w-64 h-200 rounded-lg overflow-hidden shadow-lg transition-transform duration-200 group-hover:scale-[1.02]">
                   <img
                     src="fotobeto.jpg"
                     alt="Foto de Beto Lima"
@@ -185,7 +256,7 @@ const Index = () => {
                   />
                 </div>
                 {/* Overlay com nome e cargo */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg flex flex-col justify-end p-4">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex flex-col justify-end p-4 pointer-events-none">
                   <h3 className="text-white font-bold text-xl">Beto Lima</h3>
                   <p className="text-white/90 text-base">CCO & Dev. Front-End</p>
                 </div>
@@ -193,7 +264,7 @@ const Index = () => {
 
               {/* Henrique Lima */}
               <div className="group relative">
-                <div className="w-64 h-200 rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
+                <div className="w-64 h-200 rounded-lg overflow-hidden shadow-lg transition-transform duration-200 group-hover:scale-[1.02]">
                   <img
                     src="fotohenrique.jpg"
                     alt="Foto de Henrique Lima"
@@ -201,7 +272,7 @@ const Index = () => {
                   />
                 </div>
                 {/* Overlay com nome e cargo */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg flex flex-col justify-end p-4">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex flex-col justify-end p-4 pointer-events-none">
                   <h3 className="text-white font-bold text-xl">Henrique Lima</h3>
                   <p className="text-white/90 text-base">P.O & Dev. Back-End</p>
                 </div>
@@ -209,7 +280,7 @@ const Index = () => {
 
               {/* Yuri Kohara */}
               <div className="group relative">
-                <div className="w-64 h-200 rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
+                <div className="w-64 h-200 rounded-lg overflow-hidden shadow-lg transition-transform duration-200 group-hover:scale-[1.02]">
                   <img
                     src="fotoyuri.jpg"
                     alt="Foto de Yuri Kohara"
@@ -217,15 +288,15 @@ const Index = () => {
                   />
                 </div>
                 {/* Overlay com nome e cargo */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg flex flex-col justify-end p-4">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex flex-col justify-end p-4 pointer-events-none">
                   <h3 className="text-white font-bold text-xl">Yuri Kohara</h3>
-                  <p className="text-white/90 text-base">A DECIDIR</p>
+                  <p className="text-white/90 text-base">Tech Lead</p>
                 </div>
               </div>
 
               {/* Lucas Rovina */}
               <div className="group relative">
-                <div className="w-64 h-200 rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
+                <div className="w-64 h-200 rounded-lg overflow-hidden shadow-lg transition-transform duration-200 group-hover:scale-[1.02]">
                   <img
                     src="fotolucas.jpg"
                     alt="Foto de Lucas Rovina"
@@ -233,7 +304,7 @@ const Index = () => {
                   />
                 </div>
                 {/* Overlay com nome e cargo */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg flex flex-col justify-end p-4">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex flex-col justify-end p-4 pointer-events-none">
                   <h3 className="text-white font-bold text-xl">Lucas Rovina</h3>
                   <p className="text-white/90 text-base">Analista de Dados</p>
                 </div>
@@ -351,13 +422,20 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: "#000000",
+        backgroundImage:
+          "linear-gradient(90deg, rgba(4, 4, 12, 1) 0%, rgba(4, 4, 12, 1) 14%, rgba(4, 4, 12, 1) 30%, rgba(25, 81, 145, 1) 50%, rgba(4, 4, 12, 1) 70%, rgba(4, 4, 12, 1) 85%, rgba(4, 4, 12, 1) 100%)",
+      }}
+    >
       {/* Navigation */}
       <nav
   className="fixed top-0 left-0 right-0 z-50 bg-transparent transition-all duration-300"
 >
   <div className="container mx-auto px-6">
-    <div className="flex justify-center items-center py-4">
+    <div className="relative flex items-center justify-center py-4">
       <div className="flex gap-8">
         {navigationItems.map((item) => (
           <button
@@ -370,6 +448,12 @@ const Index = () => {
           </button>
         ))}
       </div>
+      <Link
+        to="/login"
+        className="absolute right-0 text-white/90 hover:text-white text-lg font-semibold border border-white/30 px-4 py-1 rounded-md backdrop-blur-sm hover:bg-white/10 transition-colors"
+      >
+        Login/Cadastre-se
+      </Link>
     </div>
   </div>
 </nav>
@@ -382,6 +466,7 @@ const Index = () => {
           ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover"
           src="bionai4.mp4"
+          crossOrigin="anonymous"
           autoPlay
           loop
           muted
