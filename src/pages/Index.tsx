@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
+import { Notifications } from "@/components/Notifications";
 
 const Index = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -448,12 +449,17 @@ const Index = () => {
           </button>
         ))}
       </div>
-      <Link
-        to="/login"
-        className="absolute right-0 text-white/90 hover:text-white text-lg font-semibold border border-white/30 px-4 py-1 rounded-md backdrop-blur-sm hover:bg-white/10 transition-colors"
-      >
-        Login/Cadastre-se
-      </Link>
+      
+      {/* Área direita com notificações e login */}
+      <div className="absolute right-0 flex items-center space-x-4">
+        <Notifications />
+        <Link
+          to="/login"
+          className="text-white/90 hover:text-white text-lg font-semibold border border-white/30 px-4 py-1 rounded-md backdrop-blur-sm hover:bg-white/10 transition-colors"
+        >
+          Login/Cadastre-se
+        </Link>
+      </div>
     </div>
   </div>
 </nav>
