@@ -6,6 +6,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
+import Section from "@/components/Section";
 
 const queryClient = new QueryClient();
 

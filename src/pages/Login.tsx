@@ -8,7 +8,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import { Notifications } from "@/components/Notifications";
 
 const Login = () => {
   const { signInWithGoogle, isLoading, user } = useAuth();
@@ -35,11 +34,6 @@ const isStrongPassword = (pw: string) => /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])
   }, [user, navigate]);
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-gray-50 to-white flex items-center justify-center px-4">
-      {/* Header com notificações */}
-      <div className="absolute top-4 right-4">
-        <Notifications />
-      </div>
-      
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Bem-vindo</CardTitle>
